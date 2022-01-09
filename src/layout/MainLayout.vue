@@ -1,5 +1,6 @@
 <template>
   <the-navbar></the-navbar>
+   <app-message/>
   <div class="container with-nav">
     <router-view/>
   </div>
@@ -7,9 +8,10 @@
 
 <script>
 import TheNavbar from "@/components/TheNavbar";
+import AppMessage from "@/components/ui/AppMessage"
 export default {
   name: "MainLayout",
-  components: {TheNavbar}
+  components: { AppMessage, TheNavbar}
 }
 </script>
 

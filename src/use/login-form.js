@@ -41,6 +41,7 @@ export function useLoginForm() {
       try {
          await store.dispatch("auth/login", values)
          router.push("/")
+         await store.dispatch("auth/refreshToken", store.getters["auth/token"])
       } catch (e) {
       }
    })
