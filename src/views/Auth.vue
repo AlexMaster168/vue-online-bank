@@ -34,10 +34,10 @@ export default {
       const store = useStore()
 
       if (route.query.message) {
-        store.dispatch('setMessage', {
-           values: error(route.query.message),
-           type: "warning"
-        })
+         store.dispatch("setMessage", {
+            values: error(route.query.message),
+            type: "warning",
+         })
       }
       return { ...useLoginForm() }
    },
