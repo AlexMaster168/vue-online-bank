@@ -25,6 +25,31 @@ async function loggedIn(expiresIn = '3600') {
   return firebase
 }
 describe('Firebase persistence', () => {
+  it('uses the restored Firebase project when hosting has no env variables', async () => {
+    vi.stubEnv('VITE_FIREBASE_API_KEY', '')
+    vi.stubEnv('VITE_FIREBASE_DATABASE_URL', '')
+    const firebase = await loggedIn()
+    expect(fetchMock.mock.calls[0][0]).toContain('accounts:signInWithPassword?key=AIzaSy')
+    fetchMock.mockResolvedValueOnce(Response.json(null))
+    await firebase.readBank()
+    expect(fetchMock.mock.calls[1][0]).toContain(
+      'https://vue-online-bank-414c1-default-rtdb.firebaseio.com/users/user-1/bank.json',
+    )
+  })
+  it('submits registration to Firebase signUp', async () => {
+    const firebase = await import('./firebase')
+    fetchMock.mockResolvedValueOnce(
+      Response.json({
+        localId: 'new-user',
+        idToken: 'new-token',
+        refreshToken: 'refresh',
+        expiresIn: '3600',
+      }),
+    )
+    await firebase.authenticate('new@example.com', 'test-password', true)
+    expect(fetchMock.mock.calls[0][0]).toContain('accounts:signUp?key=test-public-key')
+    expect(firebase.getSession()?.uid).toBe('new-user')
+  })
   it('loads user-scoped data and ETag', async () => {
     const firebase = await loggedIn()
     fetchMock.mockResolvedValueOnce(Response.json(emptyBank(), { headers: { ETag: 'revision-1' } }))

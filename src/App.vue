@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { navigation } from './router'
 import { useBank } from './store'
-import { firebaseConfigured, resetPassword } from './firebase'
+import { resetPassword } from './firebase'
 import AppIcon from './components/AppIcon.vue'
 const bank = useBank()
 const route = useRoute()
@@ -68,7 +68,7 @@ onMounted(() => {
         <p class="muted">
           {{
             register
-              ? 'Реєстрація через Firebase Authentication.'
+              ? 'Створіть обліковий запис, щоб керувати своїми фінансами.'
               : 'Увійдіть, щоб продовжити з того місця, де зупинилися.'
           }}
         </p>
@@ -94,17 +94,14 @@ onMounted(() => {
           <button
             type="button"
             class="text-button forgot"
-            :disabled="resetting || bank.busy || !firebaseConfigured"
+            :disabled="resetting || bank.busy"
             @click="reset"
           >
             {{ resetting ? 'Надсилаємо…' : 'Забули пароль?' }}
           </button>
-          <p v-if="!firebaseConfigured" class="inline-info">
-            Для входу підключіть Firebase за інструкцією в README. Демо доступне одразу.
-          </p>
           <p v-if="bank.error" class="alert error" role="alert">{{ bank.error }}</p>
           <p v-if="bank.notice" class="alert success" role="status">{{ bank.notice }}</p>
-          <button class="button primary full" :disabled="bank.busy || !firebaseConfigured">
+          <button class="button primary full" :disabled="bank.busy">
             {{ bank.busy ? 'Підключаємося…' : register ? 'Зареєструватися' : 'Увійти до кабінету' }}
             <AppIcon name="arrow" />
           </button>
@@ -236,10 +233,6 @@ onMounted(() => {
         </div>
         <p v-if="bank.mode === 'demo'" class="mode-banner">
           Демокабінет · Усі суми й операції навчальні. Дані зберігаються в цьому браузері.
-        </p>
-        <p v-else class="mode-banner">
-          Firebase підключено · Тут ведеться облік фінансів. Справжні банківські платежі не
-          виконуються.
         </p>
         <div v-if="bank.error" class="alert error" role="alert">
           {{ bank.error

@@ -9,12 +9,14 @@ interface Session {
   expiresAt: number
 }
 const SESSION_KEY = 'north-firebase-session'
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY as string | undefined
-const database = (import.meta.env.VITE_FIREBASE_DATABASE_URL as string | undefined)?.replace(
-  /\/$/,
-  '',
-)
-export const firebaseConfigured = Boolean(apiKey && database)
+// Firebase web configuration is public. Defaults keep hosted builds usable without env overrides.
+const apiKey =
+  (import.meta.env.VITE_FIREBASE_API_KEY as string | undefined)?.trim() ||
+  'AIzaSyAV7pJxsiaL8dunzXzzG-P20f122eiwP_Y'
+const database = (
+  (import.meta.env.VITE_FIREBASE_DATABASE_URL as string | undefined)?.trim() ||
+  'https://vue-online-bank-414c1-default-rtdb.firebaseio.com'
+).replace(/\/$/, '')
 let session: Session | null = null
 try {
   const raw = sessionStorage.getItem(SESSION_KEY)
